@@ -36,7 +36,13 @@ import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.*;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -126,11 +132,11 @@ public class LibraryConfiguration extends AbstractDescribableImpl<LibraryConfigu
     }
 
     @Nonnull boolean defaultedChangelogs(@CheckForNull Boolean changelog) throws AbortException {
-        if (changelog == null) {
-            return includeInChangesets;
-        } else {
-            return changelog;
-        }
+      if (changelog == null) {
+        return includeInChangesets;
+      } else {
+        return changelog;
+      }
     }
 
     @Nonnull String defaultedVersion(@CheckForNull String version) throws AbortException {
@@ -154,7 +160,8 @@ public class LibraryConfiguration extends AbstractDescribableImpl<LibraryConfigu
         public Collection<LibraryRetrieverDescriptor> getRetrieverDescriptors() {
             StaplerRequest req = Stapler.getCurrentRequest();
             Item it = req != null ? req.findAncestorObject(Item.class) : null;
-            return DescriptorVisibilityFilter.apply(it != null ? it : Jenkins.getActiveInstance(), ExtensionList.lookup(LibraryRetrieverDescriptor.class));        }
+            return DescriptorVisibilityFilter.apply(it != null ? it : Jenkins.getActiveInstance(), ExtensionList.lookup(LibraryRetrieverDescriptor.class));
+        }
 
         public FormValidation doCheckName(@QueryParameter String name) {
             if (name.isEmpty()) {
